@@ -7,6 +7,10 @@ void mac_lstnr_display_results(mac_listnr_t *listener)
     printf("\n-----------------------------------------");
 
     for (int i=0; i<listener->num_known; i++) {
+        
+        if (listener->known[i]._hits == 0)
+            continue;
+
         printf("\n%10s - %d hits, Lat seen: %ds.",
             listener->known[i].name,
             listener->known[i]._hits,

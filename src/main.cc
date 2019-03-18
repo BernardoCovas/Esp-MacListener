@@ -30,7 +30,7 @@ void setup() {
 	mac_listnr_wifi_init(&rx_callback);
 
 	for (int i=0; i<listener->num_known; i++) {
-		printf("Known mac: %s\n", listener->known[i].mac);
+		printf("Known mac: %s - %s\n", listener->known[i].mac, listener->known[i].name);
 	}
 
 	gpio_set_direction(LED_GPIO_PIN, GPIO_MODE_OUTPUT);
@@ -45,7 +45,7 @@ void loop()
 	esp_wifi_set_channel(curr_channel, WIFI_SECOND_CHAN_NONE);
 	
 	if (screen_lit) mac_lstnr_display_results(listener);
-	else /* clear display */ ;
+	else /* TODO: clear display */ ;
 
 	vTaskDelay(pdMS_TO_TICKS(1000));
 
