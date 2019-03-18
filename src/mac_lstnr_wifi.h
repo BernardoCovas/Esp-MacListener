@@ -23,6 +23,6 @@ typedef struct {
 
 
 void mac_to_str(const uint8_t *mac, char *buf);
-
+void mac_listnr_wifi_init(wifi_promiscuous_cb_t callback);
 
 #endif /* _MAC_LSTNR_WIFI_H */

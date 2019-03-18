@@ -4,9 +4,9 @@
 
 #include <esp_wifi.h>
 
-#include "mac_listnr.h"
+#include "mac_lstnr.h"
 #include "mac_lstnr_wifi.h"
-#include "mac_listnr_config.h"
+#include "mac_lstnr_config.h"
 
 mac_listnr_t *mac_listnr_init()
 {
@@ -18,6 +18,12 @@ mac_listnr_t *mac_listnr_init()
     listener->known = (mac_listnr_known_t *) malloc(sizeof(mac_listnr_known_t) * listener->num_known);
     
     memcpy(listener->known, known, sizeof(known));
+
+    for (int i=0; i<listener->num_known; i++)
+    {
+        listener->known[i]._hits =  0;
+        listener->known[i]._secs = -1;
+    }
 
     return listener;
 }
@@ -38,19 +44,6 @@ int mac_listnr_filter_pkt(mac_listnr_t *listener, void *buff)
     if (s >= 0) return s;
     
     return -1;
-}
-
-void mac_listnr_wifi_init(wifi_promiscuous_cb_t callback)
-{
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT(); 
-	esp_wifi_init(&cfg); 
-	
-	esp_wifi_set_storage(WIFI_STORAGE_RAM); 
-	esp_wifi_set_mode(WIFI_MODE_NULL); 
-	esp_wifi_start(); 
-	esp_wifi_set_promiscuous(true); 
-	esp_wifi_set_promiscuous_rx_cb(callback); 
-	esp_wifi_set_channel(0, WIFI_SECOND_CHAN_NONE);
 }
 
 void mac_listnr_deinit(mac_listnr_t *listener)

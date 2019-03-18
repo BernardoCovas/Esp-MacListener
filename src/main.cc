@@ -3,8 +3,9 @@
 
 #include <esp_wifi.h>
 
+#include "mac_lstnr.h"
 #include "mac_lstnr_wifi.h"
-#include "mac_listnr.h"
+#include "mac_lstnr_display.h"
 
 void rx_callback(void *buff, wifi_promiscuous_pkt_type_t type);
 mac_listnr_t *listener;
@@ -25,8 +26,13 @@ void setup() {
 void loop()
 {
 	esp_wifi_set_channel(curr_channel, WIFI_SECOND_CHAN_NONE);
-	
-	vTaskDelay(pdMS_TO_TICKS(300));
+	mac_lstnr_display_results(listener);
+
+	vTaskDelay(pdMS_TO_TICKS(1000));
+
+	for (int i=0; i<listener->num_known; i++)
+		if (listener->known[i]._secs >= 0)
+			listener->known[i]._secs++;
 	
 	if (++curr_channel > 13)
 		curr_channel = 0;
@@ -35,5 +41,9 @@ void loop()
 void rx_callback(void *buff, wifi_promiscuous_pkt_type_t type)
 {
 	int index = mac_listnr_filter_pkt(listener, buff);
-	if (index >= 0) printf("%s: %s\n", listener->known[index].name, listener->known[index].mac);
+
+	if (index >= 0) {
+		listener->known[index]._hits  ++;
+		listener->known[index]._secs = 0;
+	}
 }
