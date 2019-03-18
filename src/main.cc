@@ -19,15 +19,13 @@
 
 void rx_callback(void *buff, wifi_promiscuous_pkt_type_t type);
 void blinkPattern(uint16_t num_blinks, uint32_t delay_ms);
+void button_interrupt(void);
 
 mac_listnr_t *listener;
 int curr_channel = 0;
-
+bool screen_lit = false;
 
 void setup() {
-
-	gpio_set_direction(LED_GPIO_PIN, GPIO_MODE_OUTPUT);
-
 	listener = mac_listnr_init();
 	mac_listnr_wifi_init(&rx_callback);
 
@@ -35,12 +33,19 @@ void setup() {
 		printf("Known mac: %s\n", listener->known[i].mac);
 	}
 
+	gpio_set_direction(LED_GPIO_PIN, GPIO_MODE_OUTPUT);
+	gpio_set_direction(GPIO_NUM_0, GPIO_MODE_INPUT);
+	gpio_set_pull_mode(GPIO_NUM_0, GPIO_PULLUP_ONLY);
+
+	attachInterrupt(digitalPinToInterrupt(GPIO_NUM_0), &button_interrupt, FALLING);
 }
 
 void loop()
 {
 	esp_wifi_set_channel(curr_channel, WIFI_SECOND_CHAN_NONE);
-	mac_lstnr_display_results(listener);
+	
+	if (screen_lit) mac_lstnr_display_results(listener);
+	else /* clear display */ ;
 
 	vTaskDelay(pdMS_TO_TICKS(1000));
 
@@ -72,4 +77,17 @@ void blinkPattern(uint16_t num_blinks, uint32_t delay_ms) {
 		vTaskDelay(delay_ms / portTICK_PERIOD_MS);
 	}
 
+}
+
+void button_interrupt()
+{
+	static unsigned long last_interrupt_time = 0;
+	unsigned long interrupt_time = millis();
+	
+	if (interrupt_time - last_interrupt_time > 200) 
+	{
+		screen_lit = !screen_lit;
+	}
+
+ 	last_interrupt_time = interrupt_time;
 }
