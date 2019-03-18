@@ -4,7 +4,7 @@
 
 void mac_lstnr_display_results(mac_listnr_t *listener)
 {
-    printf("\n------------------------------------------------");
+    printf("\n-----------------------------------------");
 
     for (int i=0; i<listener->num_known; i++) {
         printf("\n%10s - %d hits, Lat seen: %ds.",
@@ -14,5 +14,5 @@ void mac_lstnr_display_results(mac_listnr_t *listener)
         );
     }
 
-    printf("\n------------------------------------------------\n");
+    printf("\n-----------------------------------------\n");
 }
