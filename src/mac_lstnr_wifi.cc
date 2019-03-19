@@ -22,6 +22,8 @@ void mac_listnr_wifi_init(wifi_promiscuous_cb_t callback)
 	esp_wifi_set_mode(WIFI_MODE_NULL); 
 	esp_wifi_start(); 
 	esp_wifi_set_promiscuous(true); 
-	esp_wifi_set_promiscuous_rx_cb(callback); 
+	esp_wifi_set_promiscuous_rx_cb(callback);
+	esp_wifi_set_bandwidth(ESP_IF_WIFI_STA, WIFI_BW_HT40);
+
 	esp_wifi_set_channel(0, WIFI_SECOND_CHAN_NONE);
 }

@@ -13,6 +13,7 @@
 #define	LED_GPIO_PIN GPIO_NUM_2 // Default for esp32
 #endif
 
+#define MAX_CHANNEL 13
 #define BLINK_PATTERN_NEW_PACKET_BADADDR 3, 33
 #define BLINK_PATTERN_NEW_PACKET 1, 100
 #define BLINK_PATTERN_NEW_ADDR 2, 50
@@ -42,8 +43,8 @@ void setup() {
 
 void loop()
 {
-	esp_wifi_set_channel(curr_channel, WIFI_SECOND_CHAN_NONE);
-	
+	esp_wifi_set_channel(curr_channel, WIFI_SECOND_CHAN_ABOVE);
+
 	if (screen_lit) mac_lstnr_display_results(listener);
 	else /* TODO: clear display */ ;
 
@@ -53,7 +54,7 @@ void loop()
 		if (listener->known[i]._secs >= 0)
 			listener->known[i]._secs++;
 	
-	if (++curr_channel > 13)
+	if (++curr_channel > MAX_CHANNEL)
 		curr_channel = 0;
 }
 
